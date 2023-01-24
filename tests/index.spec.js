@@ -7,81 +7,40 @@ describe("index.html", () => {
     await page.goto(URL);
   });
 
-  it("Free plan", async () => {
-    await page.click('#freebutton');
+  it("add 3 todos", async () => {
+    await page.select('#duration', "20" );
+    await page.type( '#description', 'eat')
+    await page.click('#add');
 
-    await page.waitForSelector('#planname');
-    let element = await page.$('#planname');
-    let value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("Free");
+    await page.evaluate( () => document.getElementById("description").value = "")
+    await page.select('#duration', "50" );
+    await page.type( '#description', 'sleep')
+    await page.click('#add');
 
-    await page.waitForSelector('#monthlyrate');
-    element = await page.$('#monthlyrate');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("$0/mo");
+    await page.evaluate( () => document.getElementById("description").value = "")
+    await page.select('#duration', "30" );
+    await page.type( '#description', 'study')
+    await page.click('#add');
 
-    await page.waitForSelector('#annualrate');
-    element = await page.$('#annualrate');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("$0/yr");
-
-    let nextYear = new Date();
-    nextYear.setFullYear( nextYear.getFullYear() + 1 );
-    await page.waitForSelector('#gooduntil');
-    element = await page.$('#gooduntil');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual(nextYear.toDateString());
+    await page.waitForSelector('tbody');
+    let element = await page.$('tbody');
+    let value = await page.evaluate(el => el.innerHTML, element);
+    value = value.trim();
+    expect(value).toEqual("<tr><th>1</th><td>20</td><td>eat</td></tr>" +
+                          "<tr><th>2</th><td>50</td><td>sleep</td></tr>" +
+                          "<tr><th>3</th><td>30</td><td>study</td></tr>");
   });
 
-  it("Pro plan", async () => {
-    await page.click('#probutton');
+  it("clear todos", async () => {
+    await page.select('#duration', "20" );
+    await page.type( '#description', 'eat')
+    await page.click('#add');
+    await page.click('#clear');
 
-    await page.waitForSelector('#planname');
-    let element = await page.$('#planname');
-    let value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("Pro");
-
-    await page.waitForSelector('#monthlyrate');
-    element = await page.$('#monthlyrate');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("$15/mo");
-
-    await page.waitForSelector('#annualrate');
-    element = await page.$('#annualrate');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("$180/yr");
-
-    let nextYear = new Date();
-    nextYear.setFullYear( nextYear.getFullYear() + 1 );
-    await page.waitForSelector('#gooduntil');
-    element = await page.$('#gooduntil');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual(nextYear.toDateString());
-  });
-
-  it("Enterprise plan", async () => {
-    await page.click('#enterprisebutton');
-
-    await page.waitForSelector('#planname');
-    let element = await page.$('#planname');
-    let value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("Enterprise");
-
-    await page.waitForSelector('#monthlyrate');
-    element = await page.$('#monthlyrate');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("$29/mo");
-
-    await page.waitForSelector('#annualrate');
-    element = await page.$('#annualrate');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual("$348/yr");
-
-    let nextYear = new Date();
-    nextYear.setFullYear( nextYear.getFullYear() + 1 );
-    await page.waitForSelector('#gooduntil');
-    element = await page.$('#gooduntil');
-    value = await page.evaluate(el => el.innerText, element);
-    expect(value).toEqual(nextYear.toDateString());
+    await page.waitForSelector('tbody');
+    let element = await page.$('tbody');
+    let value = await page.evaluate(el => el.innerHTML, element);
+    value = value.trim();
+    expect(value).toEqual("");
   });
 });
